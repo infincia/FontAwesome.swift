@@ -20,10 +20,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-import UIKit
+#if os(iOS) || os(watchOS) || os(tvos)
+    import UIKit
+    public typealias View = UIView
+    public typealias Label = UILabel
+    public typealias Font = UIFont
+#elseif os(OSX)
+    import Cocoa
+    public typealias View = NSView
+    public typealias Label = NSTextField
+    public typealias Font = NSFont
+#endif
+
+
+#if os(iOS) || os(watchOS) || os(tvos)
 
 /// A view for FontAwesome icons.
-@IBDesignable public class FontAwesomeView : UIView {
+@IBDesignable public class FontAwesomeView : View {
 
     @IBInspectable
     public var iconCode:String = "" {
@@ -32,7 +45,7 @@ import UIKit
         }
     }
 
-    private var iconView = UILabel()
+    private var iconView = Label()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -48,7 +61,7 @@ import UIKit
         setupViews()
     }
 
-    /// Add a UILabel subview containing FontAwesome icon
+    /// Add a UILabel/NSTextView subview containing FontAwesome icon
     func setupViews() {
         // Fits icon in the view
         self.iconView.textAlignment = NSTextAlignment.center
@@ -57,14 +70,18 @@ import UIKit
         self.addSubview(iconView)
     }
 
+#if os(iOS) || os(watchOS) || os(tvos)
     override public func tintColorDidChange() {
         self.iconView.textColor = self.tintColor
     }
+#endif
 
     override public func layoutSubviews() {
         super.layoutSubviews()
         self.clipsToBounds = true
-        self.iconView.font = UIFont.fontAwesome(ofSize: bounds.size.width < bounds.size.height ? bounds.size.width : bounds.size.height)
+        self.iconView.font = Font.fontAwesome(ofSize: bounds.size.width < bounds.size.height ? bounds.size.width : bounds.size.height)
         self.iconView.frame = CGRect(origin: CGPoint(x: 0, y: 0), size: CGSize(width: bounds.size.width, height: bounds.size.height))
     }
 }
+
+#endif
